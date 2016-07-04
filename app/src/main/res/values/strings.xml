@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ContactRecyclerView</string>
+    <string name="transition_name_phone">phone</string>
+    <string name="transition_name_name">name</string>
+</resources>
