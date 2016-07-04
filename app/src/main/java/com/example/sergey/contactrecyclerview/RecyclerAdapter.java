@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,9 +14,17 @@ import java.util.List;
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private List<Contact> contacts;
-    public RecyclerAdapter(List<Contact> contacts) {//конструктор
-        this.contacts = contacts;
+
+    public RecyclerAdapter() {
+        this.contacts = new ArrayList<>();
     }
+
+    public void swap(List<Contact> contacts) {
+        contacts.clear();
+        contacts.addAll(contacts);
+        notifyDataSetChanged();
+    }
+
     // класс view holder с помощью которого мы получаем ссылку на каждый элемен отдельного пункта списка
      class ViewHolder extends RecyclerView.ViewHolder {
         private TextView name;

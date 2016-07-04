@@ -24,12 +24,9 @@ import java.util.List;
 * */
 public class HomeActivity extends AppCompatActivity {
     private ProgressBar progress;
-/*
-    private ListView nameNumber;
-*/
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<Contact> contacts;
 
@@ -43,7 +40,7 @@ public class HomeActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         // создаем адаптер
-        mAdapter = new RecyclerAdapter(contacts);
+        mAdapter = new RecyclerAdapter();
         mRecyclerView.setAdapter(mAdapter);
 /*
         ListView contList = (ListView) findViewById(R.id.contactList);//
@@ -51,7 +48,7 @@ public class HomeActivity extends AppCompatActivity {
         contList.setAdapter(adapter);*/
 
 
-     /*   this.nameNumber = (ListView) findViewById(R.id.contactList);//*/
+        this.mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         this.progress = (ProgressBar) findViewById(R.id.progressBar);//
         this.showContacts();//
 
@@ -116,8 +113,7 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Contact> result) {//выполняется после doInBackground(),обновляет пользовательски интерфейс
             progress.setVisibility(View.INVISIBLE);//заканчивает показ прогресс бара
-            contacts.addAll(result);//заполняем объектами резалт
-
+            mAdapter.swap(result);
         }
 
 
