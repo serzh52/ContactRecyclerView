@@ -20,8 +20,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     public void swap(List<Contact> contacts) {
-        contacts.clear();
-        contacts.addAll(contacts);
+        this.contacts.clear();
+        this.contacts.addAll(contacts);
         notifyDataSetChanged();
     }
 

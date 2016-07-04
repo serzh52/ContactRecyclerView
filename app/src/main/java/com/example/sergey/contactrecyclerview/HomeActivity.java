@@ -1,7 +1,6 @@
 package com.example.sergey.contactrecyclerview;
 
 import android.Manifest;
-import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /*создаем клас Хоумактивити активити унаследованный от Эпкомпэйтактивити  с приватными глобольными переменными
 * создаем метод без возвращаемого значения который создает пользовательский интерфейс
 *запускаем метод родителького класса onCreate() в дополнении с кодом своего onCreate()
@@ -64,7 +64,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
     @Override//
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
@@ -79,21 +78,27 @@ public class HomeActivity extends AppCompatActivity {
 
     private List<Contact> getContactNames() {//
         List<Contact> contacts = new ArrayList<>();//
-        ContentResolver cr = getContentResolver();//
-        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);//
+        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+        while (phones.moveToNext()) {
+            String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-        if (cursor!= null&&cursor.moveToFirst()) {//
+            Contact contact = new Contact(name, phoneNumber);//
+            contacts.add(contact);
+        }
+        phones.close();
+
+       /* if (cursor != null && cursor.moveToFirst()) {//
             do {
-                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));//
-                //String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                Contact contact = new Contact(name, null);//
-                contacts.add(contact);//
+                String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                //
 
 
             } while (cursor.moveToNext());//
         }
 
-        cursor.close();//
+        cursor.close();//*/
 
         return contacts;//
     }
