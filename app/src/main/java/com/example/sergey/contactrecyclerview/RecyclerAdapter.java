@@ -58,4 +58,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public int getItemCount() {
         return contacts.size();
     }
+
+    public Contact getContact(int position) {
+        return contacts.get(position);
+    }
 }

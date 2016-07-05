@@ -1,6 +1,7 @@
 package com.example.sergey.contactrecyclerview;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -42,10 +44,17 @@ public class HomeActivity extends AppCompatActivity {
         // создаем адаптер
         mAdapter = new RecyclerAdapter();
         mRecyclerView.setAdapter(mAdapter);
-/*
-        ListView contList = (ListView) findViewById(R.id.contactList);//
-        adapter = new ContactsAdapter(this,R.layout.contact_item);//инициализируем адаптер
-        contList.setAdapter(adapter);*/
+
+        mRecyclerView.addOnItemTouchListener( // and the click is handled
+                new RecyclerClickListener(this, new RecyclerClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent intent = new Intent(HomeActivity.this, DetailActivity.class);
+                        intent.putExtra("name", ((TextView) view.findViewById(R.id.contact_name)).getText());
+                        intent.putExtra("phone", ((TextView) view.findViewById(R.id.contact_phone)).getText());
+                        startActivity(intent);
+                    }
+                }));
 
 
         this.mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -78,27 +87,15 @@ public class HomeActivity extends AppCompatActivity {
 
     private List<Contact> getContactNames() {//
         List<Contact> contacts = new ArrayList<>();//
-        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
         while (phones.moveToNext()) {
-            String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
             Contact contact = new Contact(name, phoneNumber);//
             contacts.add(contact);
         }
         phones.close();
-
-       /* if (cursor != null && cursor.moveToFirst()) {//
-            do {
-                String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                //
-
-
-            } while (cursor.moveToNext());//
-        }
-
-        cursor.close();//*/
 
         return contacts;//
     }
