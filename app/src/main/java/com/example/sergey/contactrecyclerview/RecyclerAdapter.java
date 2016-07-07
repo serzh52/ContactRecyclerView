@@ -14,8 +14,14 @@ import java.util.List;
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private List<Contact> contacts;
+    private final OnItemClickListener listener;
 
-    public RecyclerAdapter() {
+    public interface OnItemClickListener {
+        void onItemClick(Contact contacts);
+    }
+
+    public RecyclerAdapter(OnItemClickListener listener) {
+        this.listener = listener;
         this.contacts = new ArrayList<>();
     }
 
@@ -35,6 +41,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             name = (TextView) itemView.findViewById(R.id.contact_name);
             phone = (TextView) itemView.findViewById(R.id.contact_phone);
         }
+
+        private void bind(final Contact contacts, final OnItemClickListener listener) {
+            name.setText(contacts.getName());
+            phone.setText(contacts.getNumber());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(contacts);
+                }
+            });
+        }
     }
 
     @Override
@@ -47,11 +64,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerAdapter.ViewHolder holder, int i) {
-// Заполнение  View данными из элемента списка с номером i
-        Contact contact = contacts.get(i);
-        holder.name.setText(contact.getName());
-        holder.phone.setText(contact.getNumber());
+    public void onBindViewHolder(RecyclerAdapter.ViewHolder holder, int position) {
+        holder.bind(contacts.get(position), listener);
     }
 
     @Override

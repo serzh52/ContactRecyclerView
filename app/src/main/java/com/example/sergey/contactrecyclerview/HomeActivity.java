@@ -13,18 +13,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /*создаем клас Хоумактивити активити унаследованный от Эпкомпэйтактивити  с приватными глобольными переменными
 * создаем метод без возвращаемого значения который создает пользовательский интерфейс
 *запускаем метод родителького класса onCreate() в дополнении с кодом своего onCreate()
 *подключаем xml файл разметки
 * */
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements RecyclerAdapter.OnItemClickListener {
     private ProgressBar progress;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private RecyclerView mRecyclerView;
@@ -42,26 +42,29 @@ public class HomeActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         // создаем адаптер
-        mAdapter = new RecyclerAdapter();
+        mAdapter = new RecyclerAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addOnItemTouchListener( // and the click is handled
+     /*   mRecyclerView.addOnItemTouchListener( // and the click is handled
                 new RecyclerClickListener(this, new RecyclerClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(HomeActivity.this, DetailActivity.class);
-                        intent.putExtra("name", ((TextView) view.findViewById(R.id.contact_name)).getText());
-                        intent.putExtra("phone", ((TextView) view.findViewById(R.id.contact_phone)).getText());
-                        startActivity(intent);
+
                     }
-                }));
+                }));*/
 
 
         this.mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         this.progress = (ProgressBar) findViewById(R.id.progressBar);//
-        this.showContacts();//
+        //
 
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.showContacts();
     }
 
     private void showContacts() {//
@@ -71,7 +74,6 @@ public class HomeActivity extends AppCompatActivity {
             new DetailCont().execute();//
         }
     }
-
 
     @Override//
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -86,18 +88,33 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private List<Contact> getContactNames() {//
+        final Random rundom = new Random();
         List<Contact> contacts = new ArrayList<>();//
         Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
         while (phones.moveToNext()) {
             String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-            Contact contact = new Contact(name, phoneNumber);//
+            Double lng = rundom.nextDouble();
+            Double lat = rundom.nextDouble();
+            Contact contact = new Contact(name, phoneNumber,lng,lat);//
             contacts.add(contact);
         }
         phones.close();
 
         return contacts;//
+    }
+
+    @Override
+    public void onItemClick(Contact contacts) {
+        Intent intent = new Intent(HomeActivity.this, DetailActivity.class);
+        intent.putExtra("contact", contacts);
+        startActivity(intent);
+
+    }
+
+    public void addOnClick(View view) {
+        Intent intent = new Intent(this, AddContactActivity.class);
+        startActivity(intent);
     }
 
     class DetailCont extends AsyncTask<Void, Void, List<Contact>> {//создаем класс который перемещает отображение контактов в отдельный поток унаследованный от асинктаск (на прямую исп.нельзя)
