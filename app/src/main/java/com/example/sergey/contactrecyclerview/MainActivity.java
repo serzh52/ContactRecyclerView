@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
                 finish();
             }
-        }, 5 * 1000);
+        }, 2 * 1000);
     }
 }
 /*создаем клас Мейнактивити активити унаследованный от Эпкомпэйтактивити
